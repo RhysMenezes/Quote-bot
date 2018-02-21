@@ -26,16 +26,51 @@ async def ping(ctx):
     print ("ping sent")
 
 @bot.command()
-async def makequote(*, message: str):
+async def quote(*, message: str):
 
-    string = str(message.split(' '))
-    print (string[0:])
+    #split the message into words
+    string = str(message)
+    temp = string.split()
+
+    #take the username out
+    user = temp[0]
+    del temp[0]
+
+    #join the message back together
+    text = " ".join(temp)
 
     #insert into database
-    cursor.execute("INSERT INTO quotes VALUES(?,?)",(string[0],string[1:]))
+    cursor.execute("INSERT INTO quotes VALUES(?,?)",(user,text))
     await bot.say('quote successfully added')
 
     string = ''
     db.commit()
 
-bot.run("[token key]")
+    #number of words in the database
+    cursor1 = cursor.execute('SELECT * from quotes')
+    print (len(cursor1.fetchall()))
+
+@bot.command()
+async def getquote(message: str):
+    
+    #sanitise input
+    string=(message,)
+
+    try:
+        #query random quote from user
+        cursor.execute('SELECT message FROM quotes WHERE user=(?) ORDER BY RANDOM() LIMIT 1',string)
+        query = cursor.fetchone()
+
+        #add quotes and username
+        output="\""+" ".join(query)+"\" - "+message
+
+        await bot.say(output)
+
+    except Exception:
+
+        await bot.say('No quotes of that user found')
+
+    string = ''   
+    db.commit()    
+
+bot.run("[token]")
