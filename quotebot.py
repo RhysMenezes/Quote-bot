@@ -19,11 +19,23 @@ db.commit()
 async def on_ready():
     print ("Connected to discord")
 
-#commands
+#######commands##########
+
+#test commmand
 @bot.command(pass_context=True)
 async def ping(ctx):
     await bot.say("pong")
     print ("ping sent")
+
+
+@bot.command()
+async def quotehelp():
+    embed = discord.Embed(name="help")
+    embed.set_author(name="Quotebot commands:")
+    embed.add_field(name="To quote:", value="!quote [user] [message]", inline=False)
+    embed.add_field(name="To display", value="!getquote [user]", inline=False)
+    await bot.say(embed=embed)
+
 
 @bot.command()
 async def quote(*, message: str):
@@ -39,38 +51,46 @@ async def quote(*, message: str):
     #join the message back together
     text = " ".join(temp)
 
+    #log
+    print("added - "+user+" \""+text+"\" to database")
+
     #insert into database
     cursor.execute("INSERT INTO quotes VALUES(?,?)",(user,text))
     await bot.say('quote successfully added')
 
-    string = ''
     db.commit()
 
     #number of words in the database
-    cursor1 = cursor.execute('SELECT * from quotes')
-    print (len(cursor1.fetchall()))
+    rows = cursor.execute('SELECT * from quotes')
+    print (len(rows.fetchall()))
 
 @bot.command()
 async def getquote(message: str):
     
     #sanitise input
-    string=(message,)
+    user=(message,)
 
     try:
         #query random quote from user
-        cursor.execute('SELECT message FROM quotes WHERE user=(?) ORDER BY RANDOM() LIMIT 1',string)
+        cursor.execute('SELECT message FROM quotes WHERE user=(?) ORDER BY RANDOM() LIMIT 1',user)
         query = cursor.fetchone()
 
-        #add quotes and username
-        output="\""+" ".join(query)+"\" - "+message
+        #adds quotes
+        output="\""+" ".join(query)+"\""
 
-        await bot.say(output)
+        #log
+        print("printed - "+message+" \""+output+"\" to the screen")
+
+        #embeds the output to make it pretty
+        style = discord.Embed(name="responding quote", description="- "+message)
+        style.set_author(name=output)
+        await bot.say(embed=style)
 
     except Exception:
 
         await bot.say('No quotes of that user found')
 
-    string = ''   
     db.commit()    
 
-bot.run("[token]")
+
+bot.run("NDE0MjU5NzA3MjE4NDkzNDQw.DW8RZA.uQwq967ZzH8OyIUJr75tHrH-Q1c")
