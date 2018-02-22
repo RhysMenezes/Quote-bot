@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Bot
 import time
+import hashlib
 import sqlite3
 
 #prefix
@@ -10,8 +11,8 @@ bot = commands.Bot(command_prefix='!')
 #check if database is made and load it
 db = sqlite3.connect('quotes.db')
 cursor = db.cursor()
-cursor.execute('CREATE TABLE IF NOT EXISTS quotes(user TEXT, message TEXT)')
-print('Loaded database')
+cursor.execute('CREATE TABLE IF NOT EXISTS quotes(hash TEXT primary key, user TEXT, message TEXT)')
+print("Loaded database")
 
 db.commit()
 
@@ -51,18 +52,20 @@ async def quote(*, message: str):
     #join the message back together
     text = " ".join(temp)
 
-    #log
-    print("added - "+user+" \""+text+"\" to database")
+    uniqueID=hash(user+message)
 
     #insert into database
-    cursor.execute("INSERT INTO quotes VALUES(?,?)",(user,text))
-    await bot.say('quote successfully added')
+    cursor.execute("INSERT INTO quotes VALUES(?,?,?)",(uniqueID,user,text))
+    await bot.say("quote successfully added")
 
     db.commit()
 
     #number of words in the database
     rows = cursor.execute('SELECT * from quotes')
-    print (len(rows.fetchall()))
+
+    #log to terminal
+    print(len(rows.fetchall())+". added - "+user+": \""+text+"\" to database")
+
 
 @bot.command()
 async def getquote(message: str):
@@ -79,7 +82,7 @@ async def getquote(message: str):
         output="\""+" ".join(query)+"\""
 
         #log
-        print("printed - "+message+" \""+output+"\" to the screen")
+        print(message+": \""+output+"\" printed to the screen")
 
         #embeds the output to make it pretty
         style = discord.Embed(name="responding quote", description="- "+message)
@@ -88,9 +91,9 @@ async def getquote(message: str):
 
     except Exception:
 
-        await bot.say('No quotes of that user found')
+        await bot.say("No quotes of that user found")
 
     db.commit()    
 
 
-bot.run("NDE0MjU5NzA3MjE4NDkzNDQw.DW8RZA.uQwq967ZzH8OyIUJr75tHrH-Q1c")
+bot.run("token")

@@ -8,4 +8,5 @@ python quotebot.py
 ```
 ## Commands
 !quote [user] [message] - stores a quote by the user  
-!getquote [user] - gets a users quote
+!getquote [user] - gets a users quote  
+!quotehelp - shows a list of commands and syntax
