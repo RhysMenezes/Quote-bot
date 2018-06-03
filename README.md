@@ -2,7 +2,10 @@
 A discord bot that can store quotes/messages from users in a database which can be called at any time.
 
 ## How to run
-Its very simple, add your token key and run:
+```
+pip install discord.py
+```
+Add your token key where it says [token] and run:
 ```
 python quotebot.py
 ```
