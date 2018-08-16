@@ -14,7 +14,13 @@ pip install discord.py
 ```
 2. Create a bot application [here](https://discordapp.com/developers/applications/) and get a discord token/secret key.
 
-3. Add your token/secret key where it says [token] at the bottom of the code and run:
+4. Add your token/secret key where it says [token] at the bottom of the code.
+
+3. To add the bot to your server find your client ID from the page above and replace it in the link below.
+```
+https://discordapp.com/oauth2/authorize?client_id=_____&scope=bot
+```
+5. Finally run:
 ```
 python quotebot.py
 ```
