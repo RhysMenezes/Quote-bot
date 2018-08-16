@@ -24,7 +24,7 @@ python quotebot.py
 !quotehelp - shows a list of commands and syntax
 !random - gets a random quote from a random user
 
-##FAQ
+## FAQ
 * The program has checks to stop people adding the same quote to a given person
 
 * Check your python version if you have async problems
